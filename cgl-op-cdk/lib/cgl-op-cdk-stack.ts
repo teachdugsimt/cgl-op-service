@@ -2,13 +2,13 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 
-export class HinoGPSiVehicleStack extends cdk.Stack {
+export class CglOpCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // layer
-    const layer = new lambda.LayerVersion(this, 'initial-layer', {
-      code: lambda.Code.fromAsset('../initial-layer-v1'),
+    const layer = new lambda.LayerVersion(this, 'utility-layer', {
+      code: lambda.Code.fromAsset('../utility-layer'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_12_X],
       license: 'Apache-2.0',
       description: 'A layer that enables initial to run in AWS Lambda',
