@@ -1,0 +1,12 @@
+[submodule "cgl-op-messaging"]
+	path = cgl-op-messaging
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-messaging
+	branch = master
+[submodule "cgl-op-file-management"]
+	path = cgl-op-file-management
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-file-management
+	branch = master
+[submodule "cgl-op-authorize"]
+	path = cgl-op-authorize
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-authorize
+	branch = master
