@@ -6,11 +6,11 @@
 	path = cgl-op-file-management
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-file-management
 	branch = master
-[submodule "cgl-op-lambda-authorizer"]
-	path = cgl-op-lambda-authorizer
-	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-lambda-authorizer
-	branch = master
 [submodule "cgl-op-authentication"]
 	path = cgl-op-authentication
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-authentication
+	branch = master
+[submodule "cgl-op-lambda-authorizer"]
+	path = cgl-op-lambda-authorizer
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-lambda-authorizer
 	branch = master
