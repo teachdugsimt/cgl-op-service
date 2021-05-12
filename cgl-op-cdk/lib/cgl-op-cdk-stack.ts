@@ -15,14 +15,14 @@ export class CglOpCdkStack extends cdk.Stack {
     });
 
     // lambda
-    const vehicleLambdaFunc = new lambda.Function(this, "GPSiVehicleFN", {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: "lambda.handler",
-      code: lambda.Code.fromAsset("../hino-gpsi-api-vehicle/", {
-        exclude: ['src/*']
-      }),
-      layers: [layer]
-    });
+    // const vehicleLambdaFunc = new lambda.Function(this, "GPSiVehicleFN", {
+    //   runtime: lambda.Runtime.NODEJS_12_X,
+    //   handler: "lambda.handler",
+    //   code: lambda.Code.fromAsset("../hino-gpsi-api-vehicle/", {
+    //     exclude: ['src/*']
+    //   }),
+    //   layers: [layer]
+    // });
 
     const authLambdaFunc = new lambda.Function(this, 'AuthenticationFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -48,17 +48,17 @@ export class CglOpCdkStack extends cdk.Stack {
     })
 
     const apigw = new apigateway.RestApi(this, 'HinoGPSiAPI', { deploy: true })
-    const vehicleIntegration = new apigateway.LambdaIntegration(vehicleLambdaFunc)
+    // const vehicleIntegration = new apigateway.LambdaIntegration(vehicleLambdaFunc)
     const authIntegration = new apigateway.LambdaIntegration(authLambdaFunc)
 
-    apigw.root
-      .resourceForPath('api/v1/vehicles')
-      .addProxy({
-        anyMethod: false
-      })
-      .addMethod('ANY', vehicleIntegration, {
-        authorizer,
-      })
+    // apigw.root
+    //   .resourceForPath('api/v1/vehicles')
+    //   .addProxy({
+    //     anyMethod: false
+    //   })
+    //   .addMethod('ANY', vehicleIntegration, {
+    //     authorizer,
+    //   })
 
     apigw.root
       .resourceForPath('api/v1/auth')
