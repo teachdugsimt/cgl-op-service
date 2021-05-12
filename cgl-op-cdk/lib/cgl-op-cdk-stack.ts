@@ -47,7 +47,7 @@ export class CglOpCdkStack extends cdk.Stack {
       resultsCacheTtl: cdk.Duration.minutes(0),
     })
 
-    const apigw = new apigateway.RestApi(this, 'HinoGPSiAPI', { deploy: true })
+    const apigw = new apigateway.RestApi(this, 'CglOpAPI', { deploy: true })
     // const vehicleIntegration = new apigateway.LambdaIntegration(vehicleLambdaFunc)
     const authIntegration = new apigateway.LambdaIntegration(authLambdaFunc)
 
