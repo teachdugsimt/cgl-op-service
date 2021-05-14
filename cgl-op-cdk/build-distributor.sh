@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ROOT=`dirname $PWD`
-CDK_FOLDER="hino-gpsi-api-cdk"
-LAYER_FOLDER="initial-layer-v1"
+CDK_FOLDER="cgl-op-cdk"
+LAYER_FOLDER="utility-layer"
 
 for entry in "$ROOT"/*
 do
