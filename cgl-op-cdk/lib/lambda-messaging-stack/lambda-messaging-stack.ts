@@ -25,7 +25,8 @@ export class LambdaMessagingStack extends cdk.NestedStack {
         exclude: ['src/*', 'test/*']
       }),
       timeout: cdk.Duration.millis(30000),
-      initialPolicy: [lambdaPolicy]
+      initialPolicy: [lambdaPolicy],
+      functionName: id
       // layers: [props.layer]
     })
 
