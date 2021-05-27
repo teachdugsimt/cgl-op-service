@@ -26,9 +26,18 @@ export class LambdaMessagingStack extends cdk.NestedStack {
       }),
       timeout: cdk.Duration.millis(30000),
       initialPolicy: [lambdaPolicy],
-      functionName: id
+      functionName: id,
+      currentVersionOptions: {
+        removalPolicy: cdk.RemovalPolicy.RETAIN
+      },
       // layers: [props.layer]
     })
+
+    const version = this.messagingLambdaFunc.currentVersion
+    const alias = new lambda.Alias(this, 'alias-lambda-messaging-development', {
+      aliasName: 'development',
+      version: version
+    });
 
     this.messagingIntegration = new apigateway.LambdaIntegration(this.messagingLambdaFunc)
     const apiGatewayRestApi = props.apigw

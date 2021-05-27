@@ -2,12 +2,13 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { TieLambdaStack } from '../lib/tie-lambda-stack';
-
-export const lambdaApiStackName = "CglOpServiceLambdaTruckServiceStack"
-export const lambdaFunctionName = "legacy-lambda-truck-service-resources"
+import SecretsManager from '../secret-manager/secret-manager'
 
 const app = new cdk.App();
 
+
+const secret_key = "CGLDevDbInstance"
+
 const envSgp = { region: 'ap-southeast-1' }
-const listLambda = ['']
-new TieLambdaStack(app, 'CglOpServiceLambdaStack', { env: envSgp, });
+new TieLambdaStack(app, 'CglOpServiceLambdaStack', { env: envSgp, secretKey: secret_key });
+

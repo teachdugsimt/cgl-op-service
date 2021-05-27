@@ -7,6 +7,11 @@ import { LambdaTruckServiceStack } from './lambda-truck-service-stack/lambda-tru
 import { ApiGatewayStack } from './api-gateway-stack/api-gateway-stack'
 import * as apigateway from '@aws-cdk/aws-apigateway';
 
+interface CdkStackProps extends cdk.StackProps {
+  env?: { region?: string }
+  secretKey: string
+}
+
 export class TieLambdaStack extends cdk.Stack {
   lambdaLayerResources: LambdaLayerStack
   lambdaMessagingResources: LambdaMessagingStack
@@ -15,20 +20,20 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaTruckServiceResources: LambdaTruckServiceStack
   // apiGatewayResources: ApiGatewayStack
 
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
     super(scope, id, props);
 
-    this.lambdaLayerResources = new LambdaLayerStack(this, "legacy-lambda-layer-resources")
+    this.lambdaLayerResources = new LambdaLayerStack(this, "lambda-layer-resources")
     const { layer } = this.lambdaLayerResources
 
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', { deploy: true })
 
-    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "legacy-lambda-authorizer-resources", { apigw })
+    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { apigw })
     const { authorizer } = this.lambdaAuthorizerResources
 
-    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "legacy-lambda-authentication-resources", { apigw, layer, authorizer })
-    this.lambdaMessagingResources = new LambdaMessagingStack(this, "legacy-lambda-messaging-resources", { apigw })
-    this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "legacy-lambda-truck-service-resources", { apigw })
+    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-authentication-resources", { apigw, layer, authorizer })
+    this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
+    this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, secretKey: props.secretKey })
 
     // this.lambdaTruckServiceResources.addDependency(apigw)
     // this.lambdaAuthenticationResources.addDependency(this.lambdaLayerResources)

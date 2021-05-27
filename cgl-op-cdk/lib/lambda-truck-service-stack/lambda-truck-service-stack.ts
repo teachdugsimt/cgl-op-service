@@ -2,9 +2,13 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
+import * as secretsManager from "@aws-cdk/aws-secretsmanager";
+import * as kms from '@aws-cdk/aws-kms'
+import * as iam from '@aws-cdk/aws-iam'
 
 interface LambdaTruckServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
+  secretKey: string
   layer?: lambda.LayerVersion
 }
 
@@ -19,6 +23,15 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
     lambdaPolicy.addActions("secretsmanager:*")
     lambdaPolicy.addAllResources()
     // lambda
+
+    const dataSec = secretsManager.Secret.fromSecretNameV2(this, 'CGLDevDbInstanceKey', props.secretKey);
+    const host: any = dataSec.secretValueFromJson('host').toString()
+    const port: any = dataSec.secretValueFromJson('port').toString()
+    const password: any = dataSec.secretValueFromJson('password').toString()
+    const engine: any = dataSec.secretValueFromJson('engine').toString()
+    const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
+    const username: any = dataSec.secretValueFromJson('username').toString()
+
     this.messagingLambdaFunc = new lambda.Function(this, 'CglTruckServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
@@ -32,12 +45,14 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       },
       functionName: id,
       environment: {
-        "TYPEORM_CONNECTION": "postgres",
-        "TYPEORM_HOST": "cgl-dev-db.chbn9ns43yos.ap-southeast-1.rds.amazonaws.com",
-        "TYPEORM_USERNAME": "postgres",
-        "TYPEORM_PASSWORD": "=5BjfT_-uaa98yYymACI2415a==LA,",
-        "TYPEORM_DATABASE": "postgres",
-        "TYPEORM_PORT": "5432",
+
+        "TYPEORM_CONNECTION": engine,
+        "TYPEORM_HOST": host,
+        "TYPEORM_USERNAME": username,
+        "TYPEORM_PASSWORD": password,
+        "TYPEORM_DATABASE": engine,
+        "TYPEORM_PORT": port,
+        "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
         "TYPEORM_LOGGING": "true",
         "TYPEORM_ENTITIES_DIR": "dist/models",
