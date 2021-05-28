@@ -19,7 +19,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
     this.authLambdaFunc = new lambda.Function(this, 'CglAuthenticationFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
-      code: lambda.Code.fromAsset('../cgl-op-authentication', {
+      code: lambda.Code.fromAsset('../cgl-op-user-service', {
         exclude: ['src/*', 'test/*']
       }),
       layers: [props.layer]
