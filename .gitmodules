@@ -14,3 +14,8 @@
 	path = cgl-op-user-service
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-user-service
 	branch = master
+[submodule "cgl-op-lambda-authorizer-service"]
+	path = cgl-op-lambda-authorizer-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-lambda-authorizer-service
+	branch = master
+

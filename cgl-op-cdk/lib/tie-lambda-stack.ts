@@ -28,7 +28,7 @@ export class TieLambdaStack extends cdk.Stack {
 
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', { deploy: true })
 
-    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { apigw })
+    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { apigw, secretKey: props.secretKey })
     const { authorizer } = this.lambdaAuthorizerResources
 
     this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-authentication-resources", { apigw, layer, authorizer })

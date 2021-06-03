@@ -3,8 +3,6 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
-import * as kms from '@aws-cdk/aws-kms'
-import * as iam from '@aws-cdk/aws-iam'
 
 interface LambdaTruckServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
