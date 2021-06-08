@@ -23,15 +23,15 @@ export class TieLambdaStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
     super(scope, id, props);
 
-    this.lambdaLayerResources = new LambdaLayerStack(this, "lambda-layer-resources")
-    const { layer } = this.lambdaLayerResources
+    // this.lambdaLayerResources = new LambdaLayerStack(this, "lambda-layer-resources")
+    // const { layer } = this.lambdaLayerResources
 
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', { deploy: true })
 
-    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { apigw, secretKey: props.secretKey })
+    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources",{})
     const { authorizer } = this.lambdaAuthorizerResources
 
-    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-authentication-resources", { apigw, layer, authorizer })
+    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer })
     this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
     this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, secretKey: props.secretKey })
 
