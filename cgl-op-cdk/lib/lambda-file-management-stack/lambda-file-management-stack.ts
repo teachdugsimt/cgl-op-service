@@ -16,8 +16,7 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     super(scope, id, props);
     // lambda
 
-    const lambdaPolicy = new PolicyStatement()
-    lambdaPolicy.addActions("s3:*")
+    const lambdaPolicy = new PolicyStatement({ actions: ["s3:*", "dynamodb:PutItem"] })
     lambdaPolicy.addAllResources()
 
     this.fileManagementLambdaFN = new lambda.Function(this, 'CglFileManagementFN', {
