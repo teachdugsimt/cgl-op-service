@@ -56,6 +56,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
         "OTP_TABLE": 'cgl_otp',
         "USER_TABLE": 'cgl_user',
+        "USER_RESET_PASS_TABLE": "cgl_user_reset_pass",
         "USER_POOL_ID": 'ap-southeast-1_hIWBSYz7z',
         "CLIENT_ID": '4qkd14u6na0fo1tfhtrdari41i',
         "MASTER_KEY_ID": 'arn:aws:kms:ap-southeast-1:029707422715:key/d0c2e90d-21f9-46bd-aa24-33e17f5d1b32',
