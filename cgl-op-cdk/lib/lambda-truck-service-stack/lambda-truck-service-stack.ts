@@ -43,12 +43,11 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       },
       functionName: id,
       environment: {
-
         "TYPEORM_CONNECTION": engine,
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": engine,
+        "TYPEORM_DATABASE": "cargolink",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
@@ -70,7 +69,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
     this.messagingIntegration = new apigateway.LambdaIntegration(this.messagingLambdaFunc)
     const apiGatewayRestApi = props.apigw
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/truck')
+      .resourceForPath('api/v1/trucks')
       .addProxy({
         anyMethod: false
       })

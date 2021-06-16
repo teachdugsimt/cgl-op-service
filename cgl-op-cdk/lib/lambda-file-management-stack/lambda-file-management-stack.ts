@@ -16,23 +16,21 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     super(scope, id, props);
     // lambda
 
-    const lambdaPolicy = new PolicyStatement({ actions: ["s3:*", "dynamodb:PutItem", "dynamodb:GetItem"] })
+    const lambdaPolicy = new PolicyStatement({ actions: ["s3:*", "dynamodb:*"] })
     lambdaPolicy.addAllResources()
 
     this.fileManagementLambdaFN = new lambda.Function(this, 'CglFileManagementFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
+      // layers: [props.layer],
       handler: 'lambda.handler',
       code: lambda.Code.fromAsset('../cgl-op-file-management', {
-        exclude: ['src/*', 'test/*', 'node_modules/*']
+        exclude: ['src/*', 'test/*']
       }),
       initialPolicy: [lambdaPolicy],
       timeout: cdk.Duration.millis(30000),
-      currentVersionOptions: {
-        removalPolicy: cdk.RemovalPolicy.RETAIN
-      },
       functionName: id,
-      layers: [props.layer]
     })
+    this.fileManagementLambdaFN.node.addDependency(props.layer)
 
     this.lambdaIntegration = new apigateway.LambdaIntegration(this.fileManagementLambdaFN)
     const apiGatewayRestApi = props.apigw
@@ -42,6 +40,7 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
         anyMethod: false
       })
       .addMethod('ANY', this.lambdaIntegration)
+
 
   }
 }
