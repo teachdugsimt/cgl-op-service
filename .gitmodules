@@ -19,3 +19,6 @@
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-lambda-authorizer-service
 	branch = master
 
+[submodule "cgl-op-job-service"]
+	path = cgl-op-job-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-job-service
