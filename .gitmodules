@@ -22,3 +22,7 @@
 [submodule "cgl-op-job-service"]
 	path = cgl-op-job-service
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-job-service
+[submodule "utility-layer"]
+	path = utility-layer
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/utility-layer
+	branch = master

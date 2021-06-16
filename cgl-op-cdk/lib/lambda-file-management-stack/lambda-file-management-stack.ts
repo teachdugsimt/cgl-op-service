@@ -2,10 +2,10 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
-import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 
 interface LambdaFileManagementProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
+  layer: lambda.LayerVersion
 }
 
 export class LambdaFileManagementStack extends cdk.NestedStack {
@@ -16,15 +16,14 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     super(scope, id, props);
     // lambda
 
-    const lambdaPolicy = new PolicyStatement()
-    lambdaPolicy.addActions("s3:*")
+    const lambdaPolicy = new PolicyStatement({ actions: ["s3:*", "dynamodb:PutItem", "dynamodb:GetItem"] })
     lambdaPolicy.addAllResources()
 
     this.fileManagementLambdaFN = new lambda.Function(this, 'CglFileManagementFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
       code: lambda.Code.fromAsset('../cgl-op-file-management', {
-        exclude: ['src/*', 'test/*']
+        exclude: ['src/*', 'test/*', 'node_modules/*']
       }),
       initialPolicy: [lambdaPolicy],
       timeout: cdk.Duration.millis(30000),
@@ -32,6 +31,7 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
         removalPolicy: cdk.RemovalPolicy.RETAIN
       },
       functionName: id,
+      layers: [props.layer]
     })
 
     this.lambdaIntegration = new apigateway.LambdaIntegration(this.fileManagementLambdaFN)
