@@ -61,6 +61,8 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "MASTER_KEY_ID": 'd0c2e90d-21f9-46bd-aa24-33e17f5d1b32',
         "PINPOINT_PROJECT_ID": '6218ffc1d1a9404b91858993b3cafed6',
         "MESSAGING_URL": 'https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod/api/v1/messaging',
+        "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
+        "API_GW_ID": "2kgrbiwfnc", "API_URL": ".execute-api.ap-southeast-1.amazonaws.com"
       }
       // layers: [props.layer]
     })
