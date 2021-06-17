@@ -27,3 +27,6 @@
 	path = utility-layer
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/utility-layer
 	branch = master
+[submodule "cgl-op-master-data-service"]
+	path = cgl-op-master-data-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-master-data-service
