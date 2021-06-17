@@ -7,6 +7,8 @@ import { LambdaTruckServiceStack } from './lambda-truck-service-stack/lambda-tru
 import { LambdaFileManagementStack } from './lambda-file-management-stack/lambda-file-management-stack'
 // import { ApiGatewayStack } from './api-gateway-stack/api-gateway-stack'
 import * as apigateway from '@aws-cdk/aws-apigateway';
+import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
+import * as acm from "@aws-cdk/aws-certificatemanager";
 
 interface CdkStackProps extends cdk.StackProps {
   env?: { region?: string }
@@ -20,6 +22,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaAuthenticationResources: LambdaAuthenticationStack
   lambdaTruckServiceResources: LambdaTruckServiceStack
   lambdaFileManagementStack: LambdaFileManagementStack
+  lambdaLayerPackageApiStack: LambdaLayerPackageApiStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -28,21 +31,38 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaLayerResources = new LambdaLayerStack(this, "lambda-layer-resources")
     const { layer } = this.lambdaLayerResources
 
+    this.lambdaLayerPackageApiStack = new LambdaLayerPackageApiStack(this, "lambda-layer-package-api-resources")
+    const { layerPackageNpm } = this.lambdaLayerPackageApiStack
+
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', {
+      // domainName: {
+      //   domainName: `api.cargolink.co.th`,
+      //   certificate: acm.Certificate.fromCertificateArn(
+      //     this,
+      //     "CglCertificate",
+      //     "arn:aws:acm:ap-southeast-1:029707422715:certificate/1d6aab07-16bb-4775-b3c7-60a013427dbd"
+      //   ),
+      //   endpointType: apigateway.EndpointType.REGIONAL
+      // },
       deploy: true,
       binaryMediaTypes: ['application/pdf', 'multipart/form-data']
     })
 
-    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", {})
+    this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { secretKey: props.secretKey })
     const { authorizer } = this.lambdaAuthorizerResources
 
-    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer })
+    this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer, secretKey: props.secretKey })
     this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
     this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, secretKey: props.secretKey })
-    this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer })
+    this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)
+
+    this.lambdaFileManagementStack.addDependency(this.lambdaLayerPackageApiStack)
+
+
+
     // this.lambdaTruckServiceResources.addDependency(apigw)
     // this.lambdaAuthenticationResources.addDependency(this.lambdaLayerResources)
   }

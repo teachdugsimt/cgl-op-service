@@ -14,8 +14,7 @@ export class LambdaMessagingStack extends cdk.NestedStack {
   constructor(scope: cdk.Construct, id: string, props: LambdaMessagingProps) {
     super(scope, id, props);
 
-    const lambdaPolicy = new PolicyStatement()
-    lambdaPolicy.addActions("SNS:*")
+    const lambdaPolicy = new PolicyStatement({ actions: ["SNS:*", "pinpoint:*", "mobiletargeting:*"] })
     lambdaPolicy.addAllResources()
     // lambda
     this.messagingLambdaFunc = new lambda.Function(this, 'CglMessagingFN', {
@@ -43,6 +42,13 @@ export class LambdaMessagingStack extends cdk.NestedStack {
     const apiGatewayRestApi = props.apigw
     apiGatewayRestApi.root
       .resourceForPath('api/v1/send-sms')
+      .addProxy({
+        anyMethod: false
+      })
+      .addMethod('ANY', this.messagingIntegration)
+
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/messaging')
       .addProxy({
         anyMethod: false
       })
