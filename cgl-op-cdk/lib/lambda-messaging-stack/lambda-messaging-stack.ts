@@ -29,6 +29,9 @@ export class LambdaMessagingStack extends cdk.NestedStack {
       currentVersionOptions: {
         removalPolicy: cdk.RemovalPolicy.RETAIN
       },
+      environment: {
+        "PINPOINT_PROJECT_ID": "6218ffc1d1a9404b91858993b3cafed6"
+      }
       // layers: [props.layer]
     })
 
@@ -40,12 +43,12 @@ export class LambdaMessagingStack extends cdk.NestedStack {
 
     this.messagingIntegration = new apigateway.LambdaIntegration(this.messagingLambdaFunc)
     const apiGatewayRestApi = props.apigw
-    apiGatewayRestApi.root
-      .resourceForPath('api/v1/send-sms')
-      .addProxy({
-        anyMethod: false
-      })
-      .addMethod('ANY', this.messagingIntegration)
+    // apiGatewayRestApi.root
+    //   .resourceForPath('api/v1/send-sms')
+    //   .addProxy({
+    //     anyMethod: false
+    //   })
+    //   .addMethod('ANY', this.messagingIntegration)
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/messaging')

@@ -17,7 +17,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
   constructor(scope: cdk.Construct, id: string, props: LambdaLayerResourcesProps) {
     super(scope, id, props);
 
-    const lambdaPolicy = new PolicyStatement({ actions: ["secretsmanager:*", "dynamodb:*", "cognito:*"] })
+    const lambdaPolicy = new PolicyStatement({ actions: ["secretsmanager:*", "dynamodb:*", "kms:*", "cognito-idp:*"] })
     lambdaPolicy.addAllResources()
     // lambda
 
@@ -92,6 +92,19 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         anyMethod: false
       })
       .addMethod('ANY', this.authIntegration)
+
+
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/users/')
+      .addMethod('GET', this.authIntegration, {
+        authorizer: props.authorizer,
+      })
+
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/users/')
+      .addMethod('POST', this.authIntegration, {
+        authorizer: props.authorizer,
+      })
 
   }
 }
