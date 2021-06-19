@@ -37,6 +37,7 @@ export class TieLambdaStack extends cdk.Stack {
     const { layerPackageNpm } = this.lambdaLayerPackageApiStack
 
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', {
+
       // domainName: {
       //   domainName: `api.cargolink.co.th`,
       //   certificate: acm.Certificate.fromCertificateArn(

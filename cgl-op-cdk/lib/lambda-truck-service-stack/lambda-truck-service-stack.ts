@@ -79,6 +79,10 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       .resourceForPath('api/v1/trucks')
       .addMethod('GET', this.messagingIntegration)
 
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/trucks')
+      .addMethod('POST', this.messagingIntegration)
+
   }
 }
 
