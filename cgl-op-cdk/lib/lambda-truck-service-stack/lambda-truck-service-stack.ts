@@ -47,7 +47,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cargolink",
+        "TYPEORM_DATABASE": "truck_service",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
