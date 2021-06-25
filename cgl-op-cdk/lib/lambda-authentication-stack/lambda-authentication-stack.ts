@@ -39,6 +39,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
       initialPolicy: [lambdaPolicy],
       functionName: id,
       timeout: cdk.Duration.millis(30000),
+      memorySize: 512,
       environment: {
         "TYPEORM_CONNECTION": engine,
         "TYPEORM_HOST": host,
@@ -63,21 +64,62 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "PINPOINT_PROJECT_ID": '6218ffc1d1a9404b91858993b3cafed6',
         "MESSAGING_URL": 'https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod/api/v1/messaging',
         "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
-        "API_URL": "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod"
+        "API_URL": "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
+        "WEB_BACKOFFICE": "https://dev.backoffice.cargolink.co.th"
       }
       // layers: [props.layer]
     })
 
+
+    const defaultCorsPreflightOptions = {
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: apigateway.Cors.ALL_METHODS,
+      allowCredentials: true,
+      allowHeaders: ["*"],
+      maxAge: cdk.Duration.seconds(0)
+    }
     const apiGatewayRestApi = props.apigw
     this.authIntegration = new apigateway.LambdaIntegration(this.authLambdaFunc)
-    apiGatewayRestApi.root
-      .resourceForPath('api/v1/users')
-      .addProxy({
-        anyMethod: false
-      })
-      .addMethod('ANY', this.authIntegration, {
-        authorizer: props.authorizer,
-      })
+    const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/users')
+
+    const p1 = u0.addProxy({ anyMethod: false })
+    p1.addMethod('ANY', this.authIntegration, { authorizer: props.authorizer })
+    // this.addCorsOptions(p1)
+
+    u0.addMethod('GET', this.authIntegration, {
+      authorizer: props.authorizer,
+    })
+    u0.addMethod('POST', this.authIntegration, {
+      authorizer: props.authorizer,
+    })
+    // this.addCorsOptions(u0)
+
+
+
+
+
+
+    // ************** CAN NOT USE ******************
+    // u0.addMethod('PATCH', this.authIntegration, {
+    //   authorizer: props.authorizer,
+    // })
+
+    // const u1 = apiGatewayRestApi.root.resourceForPath('api/v1/users/3')
+    // u1.addMethod('PATCH', this.authIntegration, {
+    //   authorizer: props.authorizer,
+    // })
+    // this.addCorsOptions(u1)
+    // ************** CAN NOT USE ******************
+
+
+
+    // const u1 = apiGatewayRestApi.root.resourceForPath('api/v1/users/artist88/gen-doc-upload-link')
+    // u1.addMethod('POST', this.authIntegration, {
+    //   authorizer: props.authorizer,
+    // })
+    // this.addCorsOptions(u1)
+
+
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/auth')
@@ -93,19 +135,34 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
       })
       .addMethod('ANY', this.authIntegration)
 
+  }
 
-    apiGatewayRestApi.root
-      .resourceForPath('api/v1/users/')
-      .addMethod('GET', this.authIntegration, {
-        authorizer: props.authorizer,
-      })
-
-    apiGatewayRestApi.root
-      .resourceForPath('api/v1/users/')
-      .addMethod('POST', this.authIntegration, {
-        authorizer: props.authorizer,
-      })
-
+  addCorsOptions(apiResource: apigateway.IResource) {
+    apiResource.addMethod('OPTIONS', new apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Cache-Control'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Credentials': "'false'",
+          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,ANY,PATCH'"
+        },
+      }],
+      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+      requestTemplates: {
+        "application/json": "{\"statusCode\": 200}"
+      },
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+          'method.response.header.Access-Control-Allow-Credentials': true,
+          'method.response.header.Access-Control-Allow-Origin': true
+        },
+      }]
+    })
   }
 }
 

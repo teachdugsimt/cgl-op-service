@@ -47,6 +47,14 @@ export class TieLambdaStack extends cdk.Stack {
       //   ),
       //   endpointType: apigateway.EndpointType.REGIONAL
       // },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
+        allowCredentials: true,
+        allowHeaders: ["*"],
+        maxAge: cdk.Duration.seconds(0),
+        // disableCache: true
+      },
       deploy: true,
       binaryMediaTypes: ['application/pdf', 'multipart/form-data']
     })

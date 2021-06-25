@@ -60,12 +60,6 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       }
     })
 
-    const version = this.messagingLambdaFunc.currentVersion
-    const alias = new lambda.Alias(this, 'alias-lambda-truck-development', {
-      aliasName: 'development',
-      version: version
-    });
-
     this.messagingIntegration = new apigateway.LambdaIntegration(this.messagingLambdaFunc)
     const apiGatewayRestApi = props.apigw
     apiGatewayRestApi.root
