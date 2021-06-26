@@ -5,7 +5,7 @@ import { LambdaAuthorizerStack } from './lambda-authorizer-stack/lambda-authoriz
 import { LambdaAuthenticationStack } from './lambda-authentication-stack/lambda-authentication-stack'
 import { LambdaTruckServiceStack } from './lambda-truck-service-stack/lambda-truck-service-stack'
 import { LambdaFileManagementStack } from './lambda-file-management-stack/lambda-file-management-stack'
-import { LambdaJobManagementStack } from './lambda-job-management-stack/lambda-job-management-stack'
+import { LambdaJobServiceStack } from './lambda-job-service-stack/lambda-jobs-service-stack'
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -24,7 +24,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaTruckServiceResources: LambdaTruckServiceStack
   lambdaFileManagementStack: LambdaFileManagementStack
   lambdaLayerPackageApiStack: LambdaLayerPackageApiStack
-  lambdaJobManagementStack: LambdaJobManagementStack
+  lambdaJobServiceStack: LambdaJobServiceStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -52,8 +52,8 @@ export class TieLambdaStack extends cdk.Stack {
         allowMethods: apigateway.Cors.ALL_METHODS,
         allowCredentials: true,
         allowHeaders: ["*"],
-        maxAge: cdk.Duration.seconds(0),
-        // disableCache: true
+        // maxAge: cdk.Duration.seconds(0),
+        disableCache: true
       },
       deploy: true,
       binaryMediaTypes: ['application/pdf', 'multipart/form-data']
@@ -66,7 +66,7 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
     this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, secretKey: props.secretKey })
     this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer: layerPackageNpm })
-    this.lambdaJobManagementStack = new LambdaJobManagementStack(this, "lambda-job-management-resources", { apigw, layer: layerPackageNpm })
+    this.lambdaJobServiceStack = new LambdaJobServiceStack(this, "lambda-job-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)
