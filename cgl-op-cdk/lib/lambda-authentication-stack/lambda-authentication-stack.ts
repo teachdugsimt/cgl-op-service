@@ -65,7 +65,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "MESSAGING_URL": 'https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod/api/v1/messaging',
         "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
         "API_URL": "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
-        "WEB_BACKOFFICE": "https://dev.backoffice.cargolink.co.th"
+        "BACK_OFFICE_URL": "https://dev.backoffice.cargolink.co.th"
       }
       // layers: [props.layer]
     })
