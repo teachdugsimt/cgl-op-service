@@ -11,6 +11,7 @@ interface LambdaFileManagementProps extends cdk.NestedStackProps {
 export class LambdaFileManagementStack extends cdk.NestedStack {
   fileManagementLambdaFN: lambda.Function
   lambdaIntegration: apigateway.LambdaIntegration
+  lambdaIntegrationMediaDowload: apigateway.LambdaIntegration
 
   constructor(scope: cdk.Construct, id: string, props: LambdaFileManagementProps) {
     super(scope, id, props);
@@ -30,7 +31,9 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
       timeout: cdk.Duration.millis(30000),
       functionName: id,
       environment: {
-        TABLE_ATTACH_CODE: "cgl_attach_code"
+        TABLE_ATTACH_CODE: "cgl_attach_code",
+        BUCKET_DOCUMENT: "cargolink-documents",
+        S3_URL: "https://cargolink-documents.s3.ap-southeast-1.amazonaws.com"
       }
     })
     this.fileManagementLambdaFN.node.addDependency(props.layer)
@@ -40,44 +43,46 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/media')
     const p1 = u0.addProxy({ anyMethod: false })
     p1.addMethod('ANY', this.lambdaIntegration)
-    // this.addCorsOptions(p1)
 
-    // u0.addProxy({
-    //   anyMethod: false
+
+
+
+
+
+
+
+
+    // this.lambdaIntegrationMediaDowload = new apigateway.LambdaIntegration(this.fileManagementLambdaFN, {
+    //   integrationResponses: [{
+    //     statusCode: '200',
+    //     // contentHandling: apigateway.ContentHandling.CONVERT_TO_BINARY
+    //     // responseParameters: {
+    //     //   'method.response.header.Access-Control-Allow-Headers': "'Content-Type,Content-Length,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+    //     //   'method.response.header.Access-Control-Allow-Origin': "'*'",
+    //     //   'method.response.header.Access-Control-Allow-Credentials': "'false'",
+    //     //   'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,ANY,PATCH'",
+    //     // },
+    //   }],
     // })
-    //   .addMethod('ANY', this.lambdaIntegration)
+
+    // const methodResponses = [{
+    //   statusCode: '200',
+    //   // responseParameters: {
+    //   //   'method.response.header.Access-Control-Allow-Headers': true,
+    //   //   'method.response.header.Access-Control-Allow-Methods': true,
+    //   //   'method.response.header.Access-Control-Allow-Credentials': true,
+    //   //   'method.response.header.Access-Control-Allow-Origin': true,
+    //   //   'method.response.header.Content-Type': true,
+    //   //   'method.response.header.Content-Length': true,
+    //   // },
+    // }]
+    // u0.addResource("/file-stream-four").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
+    // u0.addResource("/file-stream-three").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
+    // u0.addResource("/file-stream-two").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
+    // u0.addResource("/file-stream").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
 
 
   }
 
-
-  addCorsOptions(apiResource: apigateway.IResource) {
-    apiResource.addMethod('OPTIONS', new apigateway.MockIntegration({
-      integrationResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-          'method.response.header.Access-Control-Allow-Origin': "'*'",
-          'method.response.header.Access-Control-Allow-Credentials': "'false'",
-          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,ANY,PATCH'",
-        },
-      }],
-      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-      requestTemplates: {
-        "application/json": "{\"statusCode\": 200}"
-      },
-    }), {
-      methodResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': true,
-          'method.response.header.Access-Control-Allow-Methods': true,
-          'method.response.header.Access-Control-Allow-Credentials': true,
-          'method.response.header.Access-Control-Allow-Origin': true,
-        },
-      }]
-    })
-  }
-  
 }
 

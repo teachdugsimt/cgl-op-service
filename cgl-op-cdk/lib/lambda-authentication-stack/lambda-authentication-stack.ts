@@ -65,7 +65,8 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "MESSAGING_URL": 'https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod/api/v1/messaging',
         "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
         "API_URL": "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
-        "BACK_OFFICE_URL": "https://dev.backoffice.cargolink.co.th"
+        "BACK_OFFICE_URL": "https://dev.backoffice.cargolink.co.th",
+        "USER_UPLOAD": "user/upload/"
       }
       // layers: [props.layer]
     })
@@ -84,7 +85,6 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
 
     const p1 = u0.addProxy({ anyMethod: false })
     p1.addMethod('ANY', this.authIntegration, { authorizer: props.authorizer })
-    // this.addCorsOptions(p1)
 
     u0.addMethod('GET', this.authIntegration, {
       authorizer: props.authorizer,
@@ -92,34 +92,6 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
     u0.addMethod('POST', this.authIntegration, {
       authorizer: props.authorizer,
     })
-    // this.addCorsOptions(u0)
-
-
-
-
-
-
-    // ************** CAN NOT USE ******************
-    // u0.addMethod('PATCH', this.authIntegration, {
-    //   authorizer: props.authorizer,
-    // })
-
-    // const u1 = apiGatewayRestApi.root.resourceForPath('api/v1/users/3')
-    // u1.addMethod('PATCH', this.authIntegration, {
-    //   authorizer: props.authorizer,
-    // })
-    // this.addCorsOptions(u1)
-    // ************** CAN NOT USE ******************
-
-
-
-    // const u1 = apiGatewayRestApi.root.resourceForPath('api/v1/users/artist88/gen-doc-upload-link')
-    // u1.addMethod('POST', this.authIntegration, {
-    //   authorizer: props.authorizer,
-    // })
-    // this.addCorsOptions(u1)
-
-
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/auth')
@@ -137,32 +109,5 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
 
   }
 
-  addCorsOptions(apiResource: apigateway.IResource) {
-    apiResource.addMethod('OPTIONS', new apigateway.MockIntegration({
-      integrationResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Cache-Control'",
-          'method.response.header.Access-Control-Allow-Origin': "'*'",
-          'method.response.header.Access-Control-Allow-Credentials': "'false'",
-          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,ANY,PATCH'"
-        },
-      }],
-      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-      requestTemplates: {
-        "application/json": "{\"statusCode\": 200}"
-      },
-    }), {
-      methodResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': true,
-          'method.response.header.Access-Control-Allow-Methods': true,
-          'method.response.header.Access-Control-Allow-Credentials': true,
-          'method.response.header.Access-Control-Allow-Origin': true
-        },
-      }]
-    })
-  }
 }
 

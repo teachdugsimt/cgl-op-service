@@ -4,17 +4,17 @@ import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 
-interface LambdaJobServiceProps extends cdk.NestedStackProps {
+interface LambdaMasterDataProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
   secretKey: string
   layer?: lambda.LayerVersion
 }
 
-export class LambdaJobServiceStack extends cdk.NestedStack {
-  jobLambdaFunc: lambda.Function
-  jobsIntegration: apigateway.LambdaIntegration
+export class LambdaMasterDataStack extends cdk.NestedStack {
+  masterDataLambdaFunc: lambda.Function
+  masterDataIntegration: apigateway.LambdaIntegration
 
-  constructor(scope: cdk.Construct, id: string, props: LambdaJobServiceProps) {
+  constructor(scope: cdk.Construct, id: string, props: LambdaMasterDataProps) {
     super(scope, id, props);
 
     const lambdaPolicy = new PolicyStatement()
@@ -30,10 +30,10 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
 
-    this.jobLambdaFunc = new lambda.Function(this, 'CglJobServiceFN', {
+    this.masterDataLambdaFunc = new lambda.Function(this, 'CglMasterDataFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
-      code: lambda.Code.fromAsset('../cgl-op-job-service', {
+      code: lambda.Code.fromAsset('../cgl-op-master-data-service', {
         exclude: ['src/*', 'test/*']
       }),
       timeout: cdk.Duration.millis(30000),
@@ -47,7 +47,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cgl_job",
+        "TYPEORM_DATABASE": "cgl_master_data",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
@@ -60,22 +60,17 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
       }
     })
 
-    this.jobsIntegration = new apigateway.LambdaIntegration(this.jobLambdaFunc)
+    this.masterDataIntegration = new apigateway.LambdaIntegration(this.masterDataLambdaFunc)
     const apiGatewayRestApi = props.apigw
-    const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/jobs')
-    u0.addProxy({ anyMethod: false }).addMethod('ANY', this.jobsIntegration)
 
-    u0.addMethod('GET', this.jobsIntegration)
-    u0.addMethod('POST', this.jobsIntegration)
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/master-data')
+      .addProxy({ anyMethod: false })
+      .addMethod('ANY', this.masterDataIntegration)
 
-    // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/job')
-    //   .addMethod('GET', this.messagingIntegration)
-
-    // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/job')
-    //   .addMethod('POST', this.messagingIntegration)
-
+    // const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/master-data')
+    // const p1 = u0.addProxy({ anyMethod: false })
+    // p1.addMethod('ANY', this.masterDataIntegration)
   }
 }
 

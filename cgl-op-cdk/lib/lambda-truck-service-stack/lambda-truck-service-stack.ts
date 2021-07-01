@@ -7,6 +7,7 @@ import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 interface LambdaTruckServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
   secretKey: string
+  authorizer: apigateway.RequestAuthorizer,
   layer?: lambda.LayerVersion
 }
 
@@ -67,7 +68,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       .addProxy({
         anyMethod: false
       })
-      .addMethod('ANY', this.messagingIntegration)
+      .addMethod('ANY', this.messagingIntegration, { authorizer: props.authorizer })
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/trucks')
@@ -75,7 +76,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/trucks')
-      .addMethod('POST', this.messagingIntegration)
+      .addMethod('POST', this.messagingIntegration, { authorizer: props.authorizer })
 
   }
 }
