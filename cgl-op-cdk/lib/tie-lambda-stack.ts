@@ -59,8 +59,8 @@ export class TieLambdaStack extends cdk.Stack {
         disableCache: true
       },
       deploy: true,
-      binaryMediaTypes: ['*/*']
-      // binaryMediaTypes: ['application/pdf', 'multipart/form-data', 'image/png', 'image/jpeg', 'image/jpg', 'application/octet-stream']
+      // binaryMediaTypes: ['*/*']
+      binaryMediaTypes: ['application/pdf', 'multipart/form-data', 'image/png', 'image/jpeg', 'image/jpg', 'application/octet-stream']
     })
 
 
