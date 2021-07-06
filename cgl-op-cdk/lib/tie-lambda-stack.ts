@@ -7,6 +7,7 @@ import { LambdaTruckServiceStack } from './lambda-truck-service-stack/lambda-tru
 import { LambdaFileManagementStack } from './lambda-file-management-stack/lambda-file-management-stack'
 import { LambdaJobServiceStack } from './lambda-job-service-stack/lambda-jobs-service-stack'
 import { LambdaMasterDataStack } from './lambda-master-data-stack/lambda-master-data-stack'
+import { LambdaHistoryServiceStack } from './lambda-history-service-stack/lambda-history-service'
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -28,6 +29,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaLayerPackageApiStack: LambdaLayerPackageApiStack
   lambdaJobServiceStack: LambdaJobServiceStack
   lambdaMasterDataStack: LambdaMasterDataStack
+  lambdaHistoryServiceStack: LambdaHistoryServiceStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -117,10 +119,11 @@ export class TieLambdaStack extends cdk.Stack {
 
     this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer, secretKey: props.secretKey })
     this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
-    this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, authorizer ,secretKey: props.secretKey })
+    this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, authorizer, secretKey: props.secretKey })
     this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer: layerPackageNpm })
     this.lambdaJobServiceStack = new LambdaJobServiceStack(this, "lambda-job-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaMasterDataStack = new LambdaMasterDataStack(this, "lambda-master-data-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
+    this.lambdaHistoryServiceStack = new LambdaHistoryServiceStack(this, "lambda-history-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)

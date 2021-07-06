@@ -4,17 +4,18 @@ import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 
-interface LambdaMasterDataProps extends cdk.NestedStackProps {
+interface LambdaHistoryServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
   secretKey: string
+  authorizer: apigateway.RequestAuthorizer,
   layer?: lambda.LayerVersion
 }
 
-export class LambdaMasterDataStack extends cdk.NestedStack {
-  masterDataLambdaFunc: lambda.Function
-  masterDataIntegration: apigateway.LambdaIntegration
+export class LambdaHistoryServiceStack extends cdk.NestedStack {
+  historyLambdaFunc: lambda.Function
+  historyIntegration: apigateway.LambdaIntegration
 
-  constructor(scope: cdk.Construct, id: string, props: LambdaMasterDataProps) {
+  constructor(scope: cdk.Construct, id: string, props: LambdaHistoryServiceProps) {
     super(scope, id, props);
 
     const lambdaPolicy = new PolicyStatement()
@@ -30,10 +31,10 @@ export class LambdaMasterDataStack extends cdk.NestedStack {
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
 
-    this.masterDataLambdaFunc = new lambda.Function(this, 'CglMasterDataFN', {
+    this.historyLambdaFunc = new lambda.Function(this, 'CglHistorykServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
-      code: lambda.Code.fromAsset('../cgl-op-master-data-service', {
+      code: lambda.Code.fromAsset('../cgl-op-history-service', {
         exclude: ['src/*', 'test/*']
       }),
       timeout: cdk.Duration.millis(30000),
@@ -47,7 +48,7 @@ export class LambdaMasterDataStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cgl_master_data",
+        "TYPEORM_DATABASE": "cgl_history",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
@@ -60,17 +61,23 @@ export class LambdaMasterDataStack extends cdk.NestedStack {
       }
     })
 
-    this.masterDataIntegration = new apigateway.LambdaIntegration(this.masterDataLambdaFunc)
+    this.historyIntegration = new apigateway.LambdaIntegration(this.historyLambdaFunc)
     const apiGatewayRestApi = props.apigw
-
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/history')
-      .addProxy({ anyMethod: false })
-      .addMethod('ANY', this.masterDataIntegration)
+      .resourceForPath('api/v1/history/call')
+      .addProxy({
+        anyMethod: false
+      })
+      .addMethod('ANY', this.historyIntegration, { authorizer: props.authorizer })
 
-    // const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/history')
-    // const p1 = u0.addProxy({ anyMethod: false })
-    // p1.addMethod('ANY', this.masterDataIntegration)
+    // apiGatewayRestApi.root
+    //   .resourceForPath('api/v1/trucks')
+    //   .addMethod('GET', this.historyIntegration)
+
+    // apiGatewayRestApi.root
+    //   .resourceForPath('api/v1/trucks')
+    //   .addMethod('POST', this.historyIntegration, { authorizer: props.authorizer })
+
   }
 }
 
