@@ -30,3 +30,7 @@
 [submodule "cgl-op-master-data-service"]
 	path = cgl-op-master-data-service
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-master-data-service
+[submodule "cgl-op-booking"]
+	path = cgl-op-booking
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-booking
+	branch = master
