@@ -62,9 +62,9 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "CLIENT_ID": '4qkd14u6na0fo1tfhtrdari41i',
         "MASTER_KEY_ID": 'arn:aws:kms:ap-southeast-1:029707422715:key/d0c2e90d-21f9-46bd-aa24-33e17f5d1b32',
         "PINPOINT_PROJECT_ID": '6218ffc1d1a9404b91858993b3cafed6',
-        "MESSAGING_URL": 'https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod/api/v1/messaging',
+        "MESSAGING_URL": `${props.apigw.url}/api/v1/messaging`,
         "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
-        "API_URL": "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
+        "API_URL": props.apigw.url,
         "BACK_OFFICE_URL": "https://dev.backoffice.cargolink.co.th",
         "USER_UPLOAD": "user/upload/"
       }

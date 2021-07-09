@@ -47,7 +47,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cgl_job",
+        "TYPEORM_DATABASE": "job_service",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",

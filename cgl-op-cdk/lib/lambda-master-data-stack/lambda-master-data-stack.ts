@@ -47,7 +47,7 @@ export class LambdaMasterDataStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cgl_master_data",
+        "TYPEORM_DATABASE": "master_data_service",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
@@ -64,7 +64,7 @@ export class LambdaMasterDataStack extends cdk.NestedStack {
     const apiGatewayRestApi = props.apigw
 
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/history')
+      .resourceForPath('api/v1/master-data')
       .addProxy({ anyMethod: false })
       .addMethod('ANY', this.masterDataIntegration)
 
