@@ -16,7 +16,8 @@ import * as iam from "@aws-cdk/aws-iam"
 
 interface CdkStackProps extends cdk.StackProps {
   env?: { region?: string }
-  secretKey: string
+  secretKey: string,
+  secretKeyEnv: string
 }
 
 export class TieLambdaStack extends cdk.Stack {

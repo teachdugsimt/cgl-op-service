@@ -8,6 +8,7 @@ interface LambdaLayerResourcesProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
   authorizer: apigateway.RequestAuthorizer
   secretKey: string
+  secretKeyEnv: string
 }
 
 export class LambdaAuthenticationStack extends cdk.NestedStack {
@@ -28,6 +29,8 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
     const engine: any = dataSec.secretValueFromJson('engine').toString()
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
+
+    const envSec = secretsManager.Secret.fromSecretNameV2(this, 'CGLDevDbInstanceKey', props.secretKeyEnv);
 
     // lambda
     this.authLambdaFunc = new lambda.Function(this, 'CglUserServiceFN', {
