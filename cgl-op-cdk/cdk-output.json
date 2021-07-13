@@ -1,0 +1,6 @@
+{
+  "CglOpServiceLambdaStack": {
+    "CglOpAPIEndpoint894E221C": "https://m49n9z306b.execute-api.ap-southeast-1.amazonaws.com/prod/",
+    "CglOpApiUrl": "https://m49n9z306b.execute-api.ap-southeast-1.amazonaws.com/prod"
+  }
+}

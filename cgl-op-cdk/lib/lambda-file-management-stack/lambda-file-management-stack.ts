@@ -32,8 +32,8 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
       functionName: id,
       environment: {
         TABLE_ATTACH_CODE: "cgl_attach_code",
-        BUCKET_DOCUMENT: "cargolink-documents",
-        S3_URL: "https://cargolink-documents.s3.ap-southeast-1.amazonaws.com"
+        BUCKET_DOCUMENT: process.env.S3_BUCKET_NAME || "cargolink-documents",
+        S3_URL: `https://${process.env.S3_BUCKET_NAME || "cargolink-documents"}.s3.ap-southeast-1.amazonaws.com`
       }
     })
     this.fileManagementLambdaFN.node.addDependency(props.layer)
