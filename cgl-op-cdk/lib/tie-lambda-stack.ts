@@ -8,6 +8,8 @@ import { LambdaFileManagementStack } from './lambda-file-management-stack/lambda
 import { LambdaJobServiceStack } from './lambda-job-service-stack/lambda-jobs-service-stack'
 import { LambdaMasterDataStack } from './lambda-master-data-stack/lambda-master-data-stack'
 import { LambdaHistoryServiceStack } from './lambda-history-service-stack/lambda-history-service'
+import { LambdaPricingServiceStack } from "./lambda-pricing-service-stack/lambda-pricing-service-stack";
+import { LambdaServiceServiceStack } from "./lambda-service-service-stack/lambda-service-service-stack";
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -32,6 +34,8 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaJobServiceStack: LambdaJobServiceStack
   lambdaMasterDataStack: LambdaMasterDataStack
   lambdaHistoryServiceStack: LambdaHistoryServiceStack
+  lambdaPricingServiceStack: LambdaPricingServiceStack
+  lambdaServiceServiceStack: LambdaServiceServiceStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -116,6 +120,8 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaJobServiceStack = new LambdaJobServiceStack(this, "lambda-job-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaMasterDataStack = new LambdaMasterDataStack(this, "lambda-master-data-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaHistoryServiceStack = new LambdaHistoryServiceStack(this, "lambda-history-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
+    this.lambdaPricingServiceStack = new LambdaPricingServiceStack(this, "lambda-pricing-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
+    this.lambdaServiceServiceStack = new LambdaServiceServiceStack(this, "lambda-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)
