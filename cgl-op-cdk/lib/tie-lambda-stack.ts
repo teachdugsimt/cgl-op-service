@@ -10,6 +10,7 @@ import { LambdaMasterDataStack } from './lambda-master-data-stack/lambda-master-
 import { LambdaHistoryServiceStack } from './lambda-history-service-stack/lambda-history-service'
 import { LambdaPricingServiceStack } from "./lambda-pricing-service-stack/lambda-pricing-service-stack";
 import { LambdaServiceServiceStack } from "./lambda-service-service-stack/lambda-service-service-stack";
+import { LambdaBookingServiceStack } from './lambda-booking-service-stack/lambda-booking-service-stack'
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -36,6 +37,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaHistoryServiceStack: LambdaHistoryServiceStack
   lambdaPricingServiceStack: LambdaPricingServiceStack
   lambdaServiceServiceStack: LambdaServiceServiceStack
+  lambdaBookingServiceStack: LambdaBookingServiceStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -50,14 +52,16 @@ export class TieLambdaStack extends cdk.Stack {
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', {
 
       // domainName: {
-      //   domainName: `api.cargolink.co.th`,
+      //   domainName: `dev.api.cargolink.co.th`,
       //   certificate: acm.Certificate.fromCertificateArn(
       //     this,
       //     "CglCertificate",
-      //     "arn:aws:acm:ap-southeast-1:029707422715:certificate/1d6aab07-16bb-4775-b3c7-60a013427dbd"
+      //     // "arn:aws:acm:ap-southeast-1:029707422715:certificate/d7bea37d-b29c-4166-af4d-224986b8fdcf"
+      //     "arn:aws:acm:us-east-1:029707422715:certificate/4a3367b7-5635-4a3b-9538-a21208fb3d44"
       //   ),
-      //   endpointType: apigateway.EndpointType.REGIONAL
+      //   endpointType: apigateway.EndpointType.EDGE
       // },
+
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
@@ -122,6 +126,7 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaHistoryServiceStack = new LambdaHistoryServiceStack(this, "lambda-history-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaPricingServiceStack = new LambdaPricingServiceStack(this, "lambda-pricing-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaServiceServiceStack = new LambdaServiceServiceStack(this, "lambda-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
+    this.lambdaBookingServiceStack = new LambdaBookingServiceStack(this, "lambda-booking-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)

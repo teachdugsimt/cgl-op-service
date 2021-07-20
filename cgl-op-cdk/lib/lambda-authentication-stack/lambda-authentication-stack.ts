@@ -67,15 +67,15 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "OTP_TABLE": 'cgl_otp',
         "USER_TABLE": 'cgl_user',
         "USER_RESET_PASS_TABLE": "cgl_user_reset_pass",
+        "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
+        "USER_UPLOAD": "user/upload/",
         "USER_POOL_ID": userPoolId,
         "CLIENT_ID": userPoolClientId,
         "MASTER_KEY_ID": masterKeyId,
         "PINPOINT_PROJECT_ID": pinpointProjectId,
         // "MESSAGING_URL": `${props.gwUrl}api/v1/messaging`,
-        "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
         // "API_URL": `${props.gwUrl}`,
         "BACK_OFFICE_URL": `https://${backofficeUrl}`,
-        "USER_UPLOAD": "user/upload/"
       }
       // layers: [props.layer]
     })
