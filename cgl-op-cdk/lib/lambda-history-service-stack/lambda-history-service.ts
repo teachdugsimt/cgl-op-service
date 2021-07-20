@@ -48,7 +48,7 @@ export class LambdaHistoryServiceStack extends cdk.NestedStack {
         "TYPEORM_HOST": host,
         "TYPEORM_USERNAME": username,
         "TYPEORM_PASSWORD": password,
-        "TYPEORM_DATABASE": "cgl_history",
+        "TYPEORM_DATABASE": "history_service",
         "TYPEORM_PORT": port,
         "TYPEORM_NAME": dbInstanceIdentifier,
         "TYPEORM_SYNCHRONIZE": "false",
@@ -64,7 +64,7 @@ export class LambdaHistoryServiceStack extends cdk.NestedStack {
     this.historyIntegration = new apigateway.LambdaIntegration(this.historyLambdaFunc)
     const apiGatewayRestApi = props.apigw
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/history/call')
+      .resourceForPath('api/v1/history')
       .addProxy({
         anyMethod: false
       })

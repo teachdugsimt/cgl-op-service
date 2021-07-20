@@ -13,10 +13,12 @@ import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import * as iam from "@aws-cdk/aws-iam"
+import { CloudFrontStack } from './cloudfront-stack/cloudfront-stack';
 
 interface CdkStackProps extends cdk.StackProps {
   env?: { region?: string }
-  secretKey: string
+  secretKey: string,
+  secretKeyEnv: string
 }
 
 export class TieLambdaStack extends cdk.Stack {
@@ -65,13 +67,10 @@ export class TieLambdaStack extends cdk.Stack {
       binaryMediaTypes: ['application/pdf', 'multipart/form-data', 'image/png', 'image/jpeg', 'image/jpg', 'application/octet-stream']
     })
 
-
-
-
-
-
-
-
+    new cdk.CfnOutput(this, "CglOpApiUrl", {
+      value: apigw.url.replace(/\/$/, ""),
+      exportName: "ApiGatewayStack:APIGwCglOpAPIUrl"
+    });
 
     // const myRole = iam.Role.fromRoleArn(this, "AdminRole", 'arn:aws:iam::029707422715:role/apigateway-directly-get-file-s3')
     // const s3Integration = new apigateway.AwsIntegration({
@@ -105,19 +104,12 @@ export class TieLambdaStack extends cdk.Stack {
     // });
 
 
-
-
-
-
-
-
-
-
-
     this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { secretKey: props.secretKey })
     const { authorizer } = this.lambdaAuthorizerResources
 
+    // let gwUrl = cdk.Fn.importValue('ApiGatewayStack:APIGwCglOpAPIUrl')
     this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer, secretKey: props.secretKey })
+
     this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
     this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, authorizer, secretKey: props.secretKey })
     this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer: layerPackageNpm })
@@ -130,10 +122,9 @@ export class TieLambdaStack extends cdk.Stack {
 
     this.lambdaFileManagementStack.addDependency(this.lambdaLayerPackageApiStack)
 
-
-
     // this.lambdaTruckServiceResources.addDependency(apigw)
     // this.lambdaAuthenticationResources.addDependency(this.lambdaLayerResources)
+
   }
 
 }
