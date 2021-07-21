@@ -34,7 +34,7 @@ export class LambdaTripServiceStack extends cdk.NestedStack {
     this.tripLambdaFunc = new lambda.Function(this, 'CglBookingServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
-      code: lambda.Code.fromAsset('../cgl-op-booking', {
+      code: lambda.Code.fromAsset('../cgl-op-trip-service', {
         exclude: ['src/*', 'test/*']
       }),
       timeout: cdk.Duration.millis(30000),
@@ -72,10 +72,10 @@ export class LambdaTripServiceStack extends cdk.NestedStack {
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/trips')
-      .addMethod('GET', this.tripIntegration)
+      .addMethod('GET', this.tripIntegration, { authorizer: props.authorizer })
     apiGatewayRestApi.root
       .resourceForPath('api/v1/trips')
-      .addMethod('POST', this.tripIntegration)
+      .addMethod('POST', this.tripIntegration, { authorizer: props.authorizer })
 
   }
 }

@@ -40,23 +40,13 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     this.fileManagementLambdaFN.node.addDependency(props.layer)
 
     this.lambdaIntegration = new apigateway.LambdaIntegration(this.fileManagementLambdaFN, {
-      contentHandling: apigateway.ContentHandling.CONVERT_TO_BINARY
+      // contentHandling: apigateway.ContentHandling.CONVERT_TO_BINARY
     })
     const apiGatewayRestApi = props.apigw
     const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/media')
     const p1 = u0.addProxy({ anyMethod: false })
 
-    p1.addMethod('ANY', this.lambdaIntegration, {
-      methodResponses: [{
-        statusCode: '200',
-        responseModels: {
-          "image/png": apigateway.Model.EMPTY_MODEL
-        },
-        responseParameters: {
-          'method.response.header.Content-Type': true,
-        }
-      }]
-    })
+    p1.addMethod('ANY', this.lambdaIntegration)
 
 
 
