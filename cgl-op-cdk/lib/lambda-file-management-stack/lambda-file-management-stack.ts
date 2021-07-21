@@ -48,44 +48,6 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
 
     p1.addMethod('ANY', this.lambdaIntegration)
 
-
-
-
-
-
-
-
-
-    // this.lambdaIntegrationMediaDowload = new apigateway.LambdaIntegration(this.fileManagementLambdaFN, {
-    //   integrationResponses: [{
-    //     statusCode: '200',
-    //     // contentHandling: apigateway.ContentHandling.CONVERT_TO_BINARY
-    //     // responseParameters: {
-    //     //   'method.response.header.Access-Control-Allow-Headers': "'Content-Type,Content-Length,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-    //     //   'method.response.header.Access-Control-Allow-Origin': "'*'",
-    //     //   'method.response.header.Access-Control-Allow-Credentials': "'false'",
-    //     //   'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,ANY,PATCH'",
-    //     // },
-    //   }],
-    // })
-
-    // const methodResponses = [{
-    //   statusCode: '200',
-    //   // responseParameters: {
-    //   //   'method.response.header.Access-Control-Allow-Headers': true,
-    //   //   'method.response.header.Access-Control-Allow-Methods': true,
-    //   //   'method.response.header.Access-Control-Allow-Credentials': true,
-    //   //   'method.response.header.Access-Control-Allow-Origin': true,
-    //   //   'method.response.header.Content-Type': true,
-    //   //   'method.response.header.Content-Length': true,
-    //   // },
-    // }]
-    // u0.addResource("/file-stream-four").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
-    // u0.addResource("/file-stream-three").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
-    // u0.addResource("/file-stream-two").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
-    // u0.addResource("/file-stream").addMethod('GET', this.lambdaIntegrationMediaDowload, { methodResponses })
-
-
   }
 
 }
