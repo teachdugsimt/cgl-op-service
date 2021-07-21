@@ -30,6 +30,7 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
       initialPolicy: [lambdaPolicy],
       timeout: cdk.Duration.millis(30000),
       functionName: id,
+      memorySize: 512,
       environment: {
         TABLE_ATTACH_CODE: "cgl_attach_code",
         BUCKET_DOCUMENT: process.env.S3_BUCKET_NAME || "cargolink-documents",
@@ -38,11 +39,24 @@ export class LambdaFileManagementStack extends cdk.NestedStack {
     })
     this.fileManagementLambdaFN.node.addDependency(props.layer)
 
-    this.lambdaIntegration = new apigateway.LambdaIntegration(this.fileManagementLambdaFN)
+    this.lambdaIntegration = new apigateway.LambdaIntegration(this.fileManagementLambdaFN, {
+      contentHandling: apigateway.ContentHandling.CONVERT_TO_BINARY
+    })
     const apiGatewayRestApi = props.apigw
     const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/media')
     const p1 = u0.addProxy({ anyMethod: false })
-    p1.addMethod('ANY', this.lambdaIntegration)
+
+    p1.addMethod('ANY', this.lambdaIntegration, {
+      methodResponses: [{
+        statusCode: '200',
+        responseModels: {
+          "image/png": apigateway.Model.EMPTY_MODEL
+        },
+        responseParameters: {
+          'method.response.header.Content-Type': true,
+        }
+      }]
+    })
 
 
 

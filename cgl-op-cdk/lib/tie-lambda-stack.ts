@@ -11,6 +11,7 @@ import { LambdaHistoryServiceStack } from './lambda-history-service-stack/lambda
 import { LambdaPricingServiceStack } from "./lambda-pricing-service-stack/lambda-pricing-service-stack";
 import { LambdaServiceServiceStack } from "./lambda-service-service-stack/lambda-service-service-stack";
 import { LambdaBookingServiceStack } from './lambda-booking-service-stack/lambda-booking-service-stack'
+import { LambdaTripServiceStack } from './lambda-trip-service-stack/lambda-trip-service-stack'
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -38,6 +39,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaPricingServiceStack: LambdaPricingServiceStack
   lambdaServiceServiceStack: LambdaServiceServiceStack
   lambdaBookingServiceStack: LambdaBookingServiceStack
+  lambdaTripServiceStack: LambdaTripServiceStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -50,18 +52,6 @@ export class TieLambdaStack extends cdk.Stack {
     const { layerPackageNpm } = this.lambdaLayerPackageApiStack
 
     const apigw = new apigateway.RestApi(this, 'CglOpAPI', {
-
-      // domainName: {
-      //   domainName: `dev.api.cargolink.co.th`,
-      //   certificate: acm.Certificate.fromCertificateArn(
-      //     this,
-      //     "CglCertificate",
-      //     // "arn:aws:acm:ap-southeast-1:029707422715:certificate/d7bea37d-b29c-4166-af4d-224986b8fdcf"
-      //     "arn:aws:acm:us-east-1:029707422715:certificate/4a3367b7-5635-4a3b-9538-a21208fb3d44"
-      //   ),
-      //   endpointType: apigateway.EndpointType.EDGE
-      // },
-
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
@@ -70,47 +60,43 @@ export class TieLambdaStack extends cdk.Stack {
         // maxAge: cdk.Duration.seconds(0),
         disableCache: true
       },
+      // defaultIntegration: new apigateway.MockIntegration({
+      //   contentHandling: apigateway.ContentHandling.CONVERT_TO_TEXT,
+      //   integrationResponses: [{
+      //     contentHandling: apigateway.ContentHandling.CONVERT_TO_TEXT,
+      //     statusCode: '200',
+      //     responseParameters: {
+      //       'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+      //       'method.response.header.Access-Control-Allow-Origin': "'*'",
+      //       'method.response.header.Access-Control-Allow-Credentials': "'false'",
+      //       'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE'",
+      //     },
+      //   }],
+      //   passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+      //   requestTemplates: {
+      //     "application/json": "{\"statusCode\": 200}"
+      //   },
+      // }),
+      // defaultMethodOptions: {
+      //   methodResponses: [{
+      //     statusCode: '200',
+      //     responseParameters: {
+      //       'method.response.header.Access-Control-Allow-Headers': true,
+      //       'method.response.header.Access-Control-Allow-Methods': true,
+      //       'method.response.header.Access-Control-Allow-Credentials': true,
+      //       'method.response.header.Access-Control-Allow-Origin': true,
+      //     },  
+      //   }]
+      // },
       deploy: true,
       // binaryMediaTypes: ['*/*']
-      binaryMediaTypes: ['application/pdf', 'multipart/form-data', 'image/png', 'image/jpeg', 'image/jpg', 'application/octet-stream']
+      binaryMediaTypes: ['application/pdf', 'multipart/form-data', 'image/*', 'application/octet-stream']
     })
 
     new cdk.CfnOutput(this, "CglOpApiUrl", {
       value: apigw.url.replace(/\/$/, ""),
       exportName: "ApiGatewayStack:APIGwCglOpAPIUrl"
     });
-
-    // const myRole = iam.Role.fromRoleArn(this, "AdminRole", 'arn:aws:iam::029707422715:role/apigateway-directly-get-file-s3')
-    // const s3Integration = new apigateway.AwsIntegration({
-    //   service: 's3',
-    //   integrationHttpMethod: "GET",
-    //   // path: "cargolink-documents",
-    //   // action: 'GetObject',
-    //   // actionParameters: {
-    //   //   Bucket: 'cargolink-documents',
-    //   //   Key: 'file'
-    //   // },
-    //   path: "cargolink-documents/{file}",
-    //   options: {
-    //     credentialsRole: myRole,
-    //     requestParameters: {
-    //       // 'integration.request.path.bucket': 'method.request.path.bucket',
-    //       // 'integration.request.path.folder': 'method.request.path.folder',
-    //       'integration.request.path.file': 'method.request.path.file',
-    //     },
-    //     integrationResponses: [{ statusCode: "200" }]
-    //   }
-    // })
-
-    // apigw.root.addResource("{file}").addMethod("GET", s3Integration, {
-    //   methodResponses: [{ statusCode: "200" }],
-    //   requestParameters: {
-    //     // 'method.request.path.bucket': true,
-    //     // 'method.request.path.folder': true,
-    //     'method.request.path.file': true,
-    //   }
-    // });
-
 
     this.lambdaAuthorizerResources = new LambdaAuthorizerStack(this, "lambda-authorizer-resources", { secretKey: props.secretKey })
     const { authorizer } = this.lambdaAuthorizerResources
@@ -127,6 +113,7 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaPricingServiceStack = new LambdaPricingServiceStack(this, "lambda-pricing-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaServiceServiceStack = new LambdaServiceServiceStack(this, "lambda-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaBookingServiceStack = new LambdaBookingServiceStack(this, "lambda-booking-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
+    this.lambdaTripServiceStack = new LambdaTripServiceStack(this, "lambda-trip-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)
