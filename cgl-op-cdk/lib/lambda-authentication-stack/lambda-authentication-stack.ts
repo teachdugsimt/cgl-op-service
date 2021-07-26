@@ -67,15 +67,20 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         "OTP_TABLE": 'cgl_otp',
         "USER_TABLE": 'cgl_user',
         "USER_RESET_PASS_TABLE": "cgl_user_reset_pass",
-        "USER_POOL_ID": userPoolId,
-        "CLIENT_ID": userPoolClientId,
-        "MASTER_KEY_ID": masterKeyId,
-        "PINPOINT_PROJECT_ID": pinpointProjectId,
-        // "MESSAGING_URL": `${props.gwUrl}api/v1/messaging`,
         "UPLOAD_LINK_DYNAMO": "cgl_user_upload_link",
-        // "API_URL": `${props.gwUrl}`,
+        "USER_UPLOAD": "user/upload/",
+        // "USER_POOL_ID": userPoolId,
+        // "CLIENT_ID": userPoolClientId,
+        // "MASTER_KEY_ID": masterKeyId,
+        // "PINPOINT_PROJECT_ID": pinpointProjectId,
+
+        "USER_POOL_ID": 'ap-southeast-1_hIWBSYz7z',
+        "CLIENT_ID": '4qkd14u6na0fo1tfhtrdari41i',
+        "MASTER_KEY_ID": 'arn:aws:kms:ap-southeast-1:029707422715:key/d0c2e90d-21f9-46bd-aa24-33e17f5d1b32',
+        "PINPOINT_PROJECT_ID": '6218ffc1d1a9404b91858993b3cafed6',
+        // "MESSAGING_URL": `${props.gwUrl}api/v1/messaging`,  // can't => circular denpendency
+        // "API_URL": `${props.gwUrl}`, // can't => circular denpendency
         "BACK_OFFICE_URL": `https://${backofficeUrl}`,
-        "USER_UPLOAD": "user/upload/"
       }
       // layers: [props.layer]
     })
@@ -110,13 +115,6 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
 
 
 
-    const defaultCorsPreflightOptions = {
-      allowOrigins: apigateway.Cors.ALL_ORIGINS,
-      allowMethods: apigateway.Cors.ALL_METHODS,
-      allowCredentials: true,
-      allowHeaders: ["*"],
-      maxAge: cdk.Duration.seconds(0)
-    }
     const apiGatewayRestApi = props.apigw
     this.authIntegration = new apigateway.LambdaIntegration(this.authLambdaFunc)
     const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/users')

@@ -39,3 +39,15 @@
 	path = cgl-op-booking
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-booking
   branch = master
+[submodule "cgl-op-pricing-service"]
+	path = cgl-op-pricing-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-pricing-service
+  branch = master
+[submodule "cgl-op-service-service"]
+	path = cgl-op-service-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-service-service
+  branch = master
+[submodule "cgl-op-trip-service"]
+	path = cgl-op-trip-service
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-trip-service
+	branch = master
