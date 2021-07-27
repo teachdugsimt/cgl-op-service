@@ -15,9 +15,6 @@ import { LambdaTripServiceStack } from './lambda-trip-service-stack/lambda-trip-
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as iam from "@aws-cdk/aws-iam"
-import { CloudFrontStack } from './cloudfront-stack/cloudfront-stack';
 
 interface CdkStackProps extends cdk.StackProps {
   env?: { region?: string }
@@ -61,7 +58,7 @@ export class TieLambdaStack extends cdk.Stack {
         disableCache: true
       },
       deploy: true,
-      binaryMediaTypes: ['application/pdf', 'application/octet-stream', 'image/*']
+      binaryMediaTypes: ['application/pdf', 'application/octet-stream', 'image/*', 'multipart/form-data']
     })
 
     new cdk.CfnOutput(this, "CglOpApiUrl", {
