@@ -95,7 +95,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
         // cdk.Fn.importValue('ApiGatewayStack:APIGwCglOpAPIUrl')
         console.log('GWURL', gwUrl)
 
-        this.authLambdaFunc.addEnvironment('MESSAGING_URL', `${gwUrl}api/v1/messaging`)
+        this.authLambdaFunc.addEnvironment('MESSAGING_URL', `${gwUrl}/api/v1/messaging`)
         this.authLambdaFunc.addEnvironment('API_URL', `${gwUrl}`)
       }
     });
