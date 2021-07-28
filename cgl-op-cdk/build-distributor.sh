@@ -3,7 +3,7 @@
 ROOT=`dirname $PWD`
 CDK_FOLDER="cgl-op-cdk"
 LAYER_FOLDER="package-npm"
-LAYER_FOLDER2="cgl-op-master-data-service"
+LAYER_FOLDER2="package-npm"
 
 for entry in "$ROOT"/*
 do
