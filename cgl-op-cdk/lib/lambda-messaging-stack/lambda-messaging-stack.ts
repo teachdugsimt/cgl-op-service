@@ -14,6 +14,8 @@ export class LambdaMessagingStack extends cdk.NestedStack {
   constructor(scope: cdk.Construct, id: string, props: LambdaMessagingProps) {
     super(scope, id, props);
 
+    const pinpointProjectId = cdk.Fn.importValue('PinPointStack:CglPinpointProjectID')
+
     const lambdaPolicy = new PolicyStatement({ actions: ["SNS:*", "pinpoint:*", "mobiletargeting:*"] })
     lambdaPolicy.addAllResources()
     // lambda
@@ -30,7 +32,7 @@ export class LambdaMessagingStack extends cdk.NestedStack {
         removalPolicy: cdk.RemovalPolicy.RETAIN
       },
       environment: {
-        "PINPOINT_PROJECT_ID": "6218ffc1d1a9404b91858993b3cafed6"
+        "PINPOINT_PROJECT_ID": pinpointProjectId
       }
       // layers: [props.layer]
     })
