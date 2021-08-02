@@ -58,6 +58,7 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
+        "API_URL": `https://${process.env.API_URL}` || "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
       }
     })
 

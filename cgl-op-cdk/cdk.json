@@ -9,6 +9,9 @@
     "@aws-cdk/aws-kms:defaultKeyPolicies": true,
     "@aws-cdk/aws-s3:grantWriteWithoutAcl": true,
     "@aws-cdk/aws-ecs-patterns:removeDefaultDesiredCount": true,
-    "@aws-cdk/aws-rds:lowercaseDbIdentifier": true
+    "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
+    "staging": {
+      "art": "092-981-8252"
+    }
   }
 }
