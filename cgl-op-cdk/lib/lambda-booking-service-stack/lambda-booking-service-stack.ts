@@ -30,6 +30,7 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
     const engine: any = dataSec.secretValueFromJson('engine').toString()
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
+    const apiUrl: any = process.env.API_URL ? `https://${process.env.API_URL}` : "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod"
 
     this.bookingLambdaFunc = new lambda.Function(this, 'CglBookingServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -39,9 +40,6 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
       }),
       timeout: cdk.Duration.millis(30000),
       initialPolicy: [lambdaPolicy],
-      currentVersionOptions: {
-        removalPolicy: cdk.RemovalPolicy.RETAIN
-      },
       functionName: id,
       environment: {
         "TYPEORM_CONNECTION": engine,
@@ -58,7 +56,7 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
-        "API_URL": `https://${process.env.API_URL}` || "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod",
+        "API_URL": apiUrl
       }
     })
 
