@@ -58,6 +58,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
+        "API_URL": "https://stg.api.cargolink.co.th"
       }
     })
 

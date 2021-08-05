@@ -31,7 +31,7 @@ export class LambdaTripServiceStack extends cdk.NestedStack {
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
 
-    this.tripLambdaFunc = new lambda.Function(this, 'CglBookingServiceFN', {
+    this.tripLambdaFunc = new lambda.Function(this, 'CglTripServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.handler',
       code: lambda.Code.fromAsset('../cgl-op-trip-service', {
