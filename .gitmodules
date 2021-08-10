@@ -51,3 +51,7 @@
 	path = cgl-op-trip-service
 	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-trip-service
 	branch = master
+[submodule "cgl-op-document-event"]
+	path = cgl-op-document-event
+	url = https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-document-event
+	branch = master
