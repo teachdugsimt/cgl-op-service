@@ -12,6 +12,7 @@ import { LambdaPricingServiceStack } from "./lambda-pricing-service-stack/lambda
 import { LambdaServiceServiceStack } from "./lambda-service-service-stack/lambda-service-service-stack";
 import { LambdaBookingServiceStack } from './lambda-booking-service-stack/lambda-booking-service-stack'
 import { LambdaTripServiceStack } from './lambda-trip-service-stack/lambda-trip-service-stack'
+import { CargolinkDocumentStack } from './lambda-event-dynamo-s3/lambda-event-dynamo-s3'
 
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { LambdaLayerPackageApiStack } from './lambda-layer-package-api-stack/lambda-layer-stack'
@@ -37,6 +38,7 @@ export class TieLambdaStack extends cdk.Stack {
   lambdaServiceServiceStack: LambdaServiceServiceStack
   lambdaBookingServiceStack: LambdaBookingServiceStack
   lambdaTripServiceStack: LambdaTripServiceStack
+  cargolinkDocumentStack: CargolinkDocumentStack
   // apiGatewayResources: ApiGatewayStack
 
   constructor(scope: cdk.Construct, id: string, props: CdkStackProps) {
@@ -82,6 +84,8 @@ export class TieLambdaStack extends cdk.Stack {
     this.lambdaServiceServiceStack = new LambdaServiceServiceStack(this, "lambda-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaBookingServiceStack = new LambdaBookingServiceStack(this, "lambda-booking-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
     this.lambdaTripServiceStack = new LambdaTripServiceStack(this, "lambda-trip-resources", { apigw, authorizer, secretKey: props.secretKey, layer: layerPackageNpm })
+
+    this.cargolinkDocumentStack = new CargolinkDocumentStack(this, "cargolink-document-event", {})
 
     apigw.node.addDependency(this.lambdaFileManagementStack)
     apigw.node.addDependency(this.lambdaTruckServiceResources)
