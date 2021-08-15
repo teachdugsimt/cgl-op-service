@@ -4,7 +4,8 @@ import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 import { spawn } from 'child_process';
-const url = require('url');
+import * as events from '@aws-cdk/aws-events'
+import * as targets from "@aws-cdk/aws-events-targets"
 interface LambdaLayerResourcesProps extends cdk.NestedStackProps {
   // layer: lambda.LayerVersion
   apigw: apigateway.RestApi
@@ -37,6 +38,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
     const masterKeyId = cdk.Fn.importValue('KmsStack:CglUserKeyARN')
     const pinpointProjectId = cdk.Fn.importValue('PinPointStack:CglPinpointProjectID')
     const backofficeUrl = process.env.BACKOFFICE_URL
+    const userServicePath = `api/v1/users`
 
     // lambda
     this.authLambdaFunc = new lambda.Function(this, 'CglUserServiceFN', {
@@ -117,7 +119,7 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
 
     const apiGatewayRestApi = props.apigw
     this.authIntegration = new apigateway.LambdaIntegration(this.authLambdaFunc)
-    const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/users')
+    const u0 = apiGatewayRestApi.root.resourceForPath(userServicePath)
 
     const p1 = u0.addProxy({ anyMethod: false })
     p1.addMethod('ANY', this.authIntegration, { authorizer: props.authorizer })
@@ -143,6 +145,25 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
       })
       .addMethod('ANY', this.authIntegration)
 
+    const meetingSyncEvent = {
+      path: `/${userServicePath}`,
+      httpMethod: "GET"
+    };
+
+    const eventTarget = new targets.LambdaFunction(this.authLambdaFunc, {
+      event: events.RuleTargetInput.fromObject(meetingSyncEvent)
+    });
+
+    const eventRule = new events.Rule(this, "CglUserEventRule", {
+      enabled: true,
+      description: `Event to invoke GET /${userServicePath}`,
+      ruleName: "cgl-op-event-rule-user-service",
+      targets: [
+        eventTarget
+      ],
+      schedule: events.Schedule.rate(cdk.Duration.minutes(10))
+    });
+    // eventRule.addTarget(new targets.LambdaFunction(this.messagingLambdaFunc));
   }
 
 }

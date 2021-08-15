@@ -3,6 +3,8 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
+import * as events from '@aws-cdk/aws-events'
+import * as targets from "@aws-cdk/aws-events-targets"
 
 interface LambdaTruckServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
@@ -18,8 +20,7 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
   constructor(scope: cdk.Construct, id: string, props: LambdaTruckServiceProps) {
     super(scope, id, props);
 
-    const lambdaPolicy = new PolicyStatement()
-    lambdaPolicy.addActions("secretsmanager:*")
+    const lambdaPolicy = new PolicyStatement({ actions: ["secretsmanager:*", "dynamodb:*", "s3:*"] })
     lambdaPolicy.addAllResources()
     // lambda
 
@@ -30,6 +31,9 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
     const engine: any = dataSec.secretValueFromJson('engine').toString()
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
+    const truckPath = "api/v1/trucks"
+    const apiUrl: any = process.env.API_URL ? `https://${process.env.API_URL}` : "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod"
+    const backofficeUrl = process.env.BACKOFFICE_URL
 
     this.messagingLambdaFunc = new lambda.Function(this, 'CglTruckServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -58,27 +62,49 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
-        "API_URL": "https://stg.api.cargolink.co.th"
+        "API_URL": apiUrl,
+        "UPLOAD_LINK_DYNAMO": 'cgl_truck_upload_link',
+        "BACK_OFFICE_URL": `https://${backofficeUrl}`,
+        "USER_UPLOAD": "truck/upload/"
       }
     })
 
     this.messagingIntegration = new apigateway.LambdaIntegration(this.messagingLambdaFunc)
     const apiGatewayRestApi = props.apigw
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/trucks')
+      .resourceForPath(truckPath)
       .addProxy({
         anyMethod: false
       })
       .addMethod('ANY', this.messagingIntegration, { authorizer: props.authorizer })
 
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/trucks')
+      .resourceForPath(truckPath)
       .addMethod('GET', this.messagingIntegration)
 
     apiGatewayRestApi.root
-      .resourceForPath('api/v1/trucks')
+      .resourceForPath(truckPath)
       .addMethod('POST', this.messagingIntegration, { authorizer: props.authorizer })
 
+    const meetingSyncEvent = {
+      path: `/${truckPath}`,
+      httpMethod: "GET"
+    };
+
+    const eventTarget = new targets.LambdaFunction(this.messagingLambdaFunc, {
+      event: events.RuleTargetInput.fromObject(meetingSyncEvent)
+    });
+
+    const eventRule = new events.Rule(this, "CglTruckEventRule", {
+      enabled: true,
+      description: `Event to invoke GET /${truckPath}`,
+      ruleName: "cgl-op-event-rule-trucks",
+      targets: [
+        eventTarget
+      ],
+      schedule: events.Schedule.rate(cdk.Duration.minutes(10))
+    });
+    // eventRule.addTarget(new targets.LambdaFunction(this.messagingLambdaFunc));
   }
 }
 

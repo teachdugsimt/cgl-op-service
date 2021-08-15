@@ -38,8 +38,8 @@ export class CargolinkDocumentStack extends cdk.Stack {
     // Every 5 minutes between 8:00 AM and 5:55 PM weekdays => cron(0/5 8-17 ? * MON-FRI *)
     // 9:00 AM on the first Monday of each month => cron(0 9 ? * 2#1 *)
     const documentRule = new events.Rule(this, "CglDocumentRule", {
-      // schedule: events.Schedule.expression('cron(0 18 ? * SUN *)') // Run every day at 6PM UTC
-      schedule: events.Schedule.expression('cron(0/5 * ? * * *)'),
+      schedule: events.Schedule.expression('cron(0 18 ? * SUN *)'), // Run every day at 6PM UTC
+      // schedule: events.Schedule.expression('cron(0/5 * ? * * *)'),
       enabled: true,
       ruleName: 'cgl-op-document-shedule'
     })

@@ -3,7 +3,8 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
-
+import * as events from '@aws-cdk/aws-events'
+import * as targets from "@aws-cdk/aws-events-targets"
 interface LambdaJobServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
   secretKey: string
@@ -29,6 +30,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
     const engine: any = dataSec.secretValueFromJson('engine').toString()
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
+    const jobPath = `api/v1/jobs`
 
     this.jobLambdaFunc = new lambda.Function(this, 'CglJobServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -62,19 +64,31 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
 
     this.jobsIntegration = new apigateway.LambdaIntegration(this.jobLambdaFunc)
     const apiGatewayRestApi = props.apigw
-    const u0 = apiGatewayRestApi.root.resourceForPath('api/v1/jobs')
+    const u0 = apiGatewayRestApi.root.resourceForPath(jobPath)
     u0.addProxy({ anyMethod: false }).addMethod('ANY', this.jobsIntegration)
 
     u0.addMethod('GET', this.jobsIntegration)
     u0.addMethod('POST', this.jobsIntegration)
 
-    // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/job')
-    //   .addMethod('GET', this.messagingIntegration)
+    const meetingSyncEvent = {
+      path: `/${jobPath}`,
+      httpMethod: "GET"
+    };
 
-    // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/job')
-    //   .addMethod('POST', this.messagingIntegration)
+    const eventTarget = new targets.LambdaFunction(this.jobLambdaFunc, {
+      event: events.RuleTargetInput.fromObject(meetingSyncEvent)
+    });
+
+    const eventRule = new events.Rule(this, "CglJobEventRule", {
+      enabled: true,
+      description: `Event to invoke GET /${jobPath}`,
+      ruleName: "cgl-op-event-rule-job-service",
+      targets: [
+        eventTarget
+      ],
+      schedule: events.Schedule.rate(cdk.Duration.minutes(10))
+    });
+    // eventRule.addTarget(new targets.LambdaFunction(this.messagingLambdaFunc));
 
   }
 }
