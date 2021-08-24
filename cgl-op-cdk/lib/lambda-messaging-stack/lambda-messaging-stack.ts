@@ -1,10 +1,12 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
+import * as secretsManager from "@aws-cdk/aws-secretsmanager";
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 interface LambdaMessagingProps extends cdk.NestedStackProps {
   layer?: lambda.LayerVersion
   apigw: apigateway.RestApi
+  secretKey: string
 }
 
 export class LambdaMessagingStack extends cdk.NestedStack {
@@ -15,6 +17,13 @@ export class LambdaMessagingStack extends cdk.NestedStack {
     super(scope, id, props);
 
     const pinpointProjectId = cdk.Fn.importValue('PinPointStack:CglPinpointProjectID')
+    const dataSec = secretsManager.Secret.fromSecretNameV2(this, 'CGLDevDbInstanceKey', props.secretKey);
+    const host: any = dataSec.secretValueFromJson('host').toString()
+    const port: any = dataSec.secretValueFromJson('port').toString()
+    const password: any = dataSec.secretValueFromJson('password').toString()
+    const engine: any = dataSec.secretValueFromJson('engine').toString()
+    const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
+    const username: any = dataSec.secretValueFromJson('username').toString()
 
     const lambdaPolicy = new PolicyStatement({ actions: ["SNS:*", "pinpoint:*", "mobiletargeting:*"] })
     lambdaPolicy.addAllResources()
@@ -29,7 +38,21 @@ export class LambdaMessagingStack extends cdk.NestedStack {
       initialPolicy: [lambdaPolicy],
       functionName: id,
       environment: {
-        "PINPOINT_PROJECT_ID": pinpointProjectId
+        "PINPOINT_PROJECT_ID": pinpointProjectId,
+        "TYPEORM_CONNECTION": engine,
+        "TYPEORM_HOST": host,
+        "TYPEORM_USERNAME": username,
+        "TYPEORM_PASSWORD": password,
+        "TYPEORM_DATABASE": "user_service",
+        "TYPEORM_PORT": port,
+        "TYPEORM_NAME": dbInstanceIdentifier,
+        "TYPEORM_SYNCHRONIZE": "false",
+        "TYPEORM_LOGGING": "true",
+        "TYPEORM_ENTITIES_DIR": "dist/models",
+        "TYPEORM_ENTITIES": "dist/models/*.entity.js",
+        "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
+        "TYPEORM_MIGRATIONS_RUN": "true",
+        "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
       }
       // layers: [props.layer]
     })

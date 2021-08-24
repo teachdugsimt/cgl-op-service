@@ -74,7 +74,7 @@ export class TieLambdaStack extends cdk.Stack {
     // let gwUrl = cdk.Fn.importValue('ApiGatewayStack:APIGwCglOpAPIUrl')
     this.lambdaAuthenticationResources = new LambdaAuthenticationStack(this, "lambda-user-service-resources", { apigw, authorizer, secretKey: props.secretKey })
 
-    this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw })
+    this.lambdaMessagingResources = new LambdaMessagingStack(this, "lambda-messaging-resources", { apigw, secretKey: props.secretKey })
     this.lambdaTruckServiceResources = new LambdaTruckServiceStack(this, "lambda-truck-service-resources", { apigw, authorizer, secretKey: props.secretKey })
     this.lambdaFileManagementStack = new LambdaFileManagementStack(this, "lambda-file-management-resources", { apigw, layer: layerPackageNpm })
     this.lambdaJobServiceStack = new LambdaJobServiceStack(this, "lambda-job-service-resources", { apigw, secretKey: props.secretKey, layer: layerPackageNpm })
