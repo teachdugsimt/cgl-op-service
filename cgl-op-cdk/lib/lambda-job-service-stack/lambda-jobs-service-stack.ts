@@ -1,3 +1,4 @@
+require('dotenv').config()
 import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
@@ -31,6 +32,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
     const jobPath = `api/v1/jobs`
+    const api_host = process.env.API_HOST
 
     this.jobLambdaFunc = new lambda.Function(this, 'CglJobServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -59,6 +61,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
+        "API_HOST": `https://${api_host}`
       }
     })
 
