@@ -1,0 +1,18 @@
+{
+  "name": "cgl-op-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "submodule:update": "git submodule update --remote --merge",
+    "submodule:version": "git submodule foreach '../scripts/show-version.sh'",
+    "submodule:branch": "git submodule foreach 'git branch'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/cgl-op-service"
+  },
+  "author": "",
+  "license": "ISC"
+}
