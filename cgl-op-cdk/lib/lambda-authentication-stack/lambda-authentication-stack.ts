@@ -132,12 +132,28 @@ export class LambdaAuthenticationStack extends cdk.NestedStack {
       authorizer: props.authorizer,
     })
 
+
+
     apiGatewayRestApi.root
       .resourceForPath('api/v1/auth')
       .addProxy({
         anyMethod: false
       })
       .addMethod('ANY', this.authIntegration)
+
+    apiGatewayRestApi.root
+      .resourceForPath('api/v2/auth')
+      .addProxy({
+        anyMethod: false
+      })
+      .addMethod('ANY', this.authIntegration)
+
+    apiGatewayRestApi.root
+      .resourceForPath('api/v2/users')
+      .addProxy({
+        anyMethod: false
+      })
+      .addMethod('ANY', this.authIntegration, { authorizer: props.authorizer })
 
     apiGatewayRestApi.root
       .resourceForPath('api/v1/password')

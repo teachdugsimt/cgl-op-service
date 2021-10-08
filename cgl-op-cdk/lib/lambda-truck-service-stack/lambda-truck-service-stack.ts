@@ -79,6 +79,13 @@ export class LambdaTruckServiceStack extends cdk.NestedStack {
       .addMethod('ANY', this.messagingIntegration, { authorizer: props.authorizer })
 
     apiGatewayRestApi.root
+      .resourceForPath('api/v2/trucks')
+      .addProxy({
+        anyMethod: false
+      })
+      .addMethod('ANY', this.messagingIntegration, { authorizer: props.authorizer })
+
+    apiGatewayRestApi.root
       .resourceForPath(truckPath)
       .addMethod('GET', this.messagingIntegration)
 

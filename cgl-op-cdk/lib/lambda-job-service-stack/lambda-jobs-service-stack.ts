@@ -32,7 +32,7 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
     const dbInstanceIdentifier: any = dataSec.secretValueFromJson('dbInstanceIdentifier').toString()
     const username: any = dataSec.secretValueFromJson('username').toString()
     const jobPath = `api/v1/jobs`
-    const api_host = process.env.API_HOST
+    const api_host = process.env.API_HOST || "dev.api.cargolink.co.th"
 
     this.jobLambdaFunc = new lambda.Function(this, 'CglJobServiceFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
