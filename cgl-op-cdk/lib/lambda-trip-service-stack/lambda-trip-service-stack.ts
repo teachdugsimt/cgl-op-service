@@ -58,6 +58,7 @@ export class LambdaTripServiceStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
+        "PAYMENT_DB": "payment_service"
       }
     })
 
