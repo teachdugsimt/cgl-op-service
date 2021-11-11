@@ -27,6 +27,8 @@ export class LambdaMessagingStack extends cdk.NestedStack {
 
     const lambdaPolicy = new PolicyStatement({ actions: ["SNS:*", "pinpoint:*", "mobiletargeting:*"] })
     lambdaPolicy.addAllResources()
+
+    const apiUrl: any = process.env.API_URL ? `https://${process.env.API_URL}` : "https://2kgrbiwfnc.execute-api.ap-southeast-1.amazonaws.com/prod"
     // lambda
     this.messagingLambdaFunc = new lambda.Function(this, 'CglMessagingFN', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -53,6 +55,11 @@ export class LambdaMessagingStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS": "dist/migrations/*.js",
         "TYPEORM_MIGRATIONS_RUN": "true",
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
+
+        "API_URL": apiUrl,
+        CHANNEL_ACCESS_TOKEN: "",
+        LIFF_ID: "",
+
       }
       // layers: [props.layer]
     })
