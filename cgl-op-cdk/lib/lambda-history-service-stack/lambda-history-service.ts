@@ -63,20 +63,18 @@ export class LambdaHistoryServiceStack extends cdk.NestedStack {
 
     this.historyIntegration = new apigateway.LambdaIntegration(this.historyLambdaFunc)
     const apiGatewayRestApi = props.apigw
-    apiGatewayRestApi.root
-      .resourceForPath('api/v1/history')
-      .addProxy({
-        anyMethod: false
-      })
-      .addMethod('ANY', this.historyIntegration, { authorizer: props.authorizer })
-
     // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/trucks')
-    //   .addMethod('GET', this.historyIntegration)
+    //   .resourceForPath('api/v1/history')
+    //   .addProxy({
+    //     anyMethod: false
+    //   })
+    //   .addMethod('ANY', this.historyIntegration, { authorizer: props.authorizer })
 
-    // apiGatewayRestApi.root
-    //   .resourceForPath('api/v1/trucks')
-    //   .addMethod('POST', this.historyIntegration, { authorizer: props.authorizer })
+    const u0 = apiGatewayRestApi.root.resourceForPath(`api/v1/history`)
+    u0.addProxy({ anyMethod: false }).addMethod('ANY', this.historyIntegration)
+
+    u0.addMethod('GET', this.historyIntegration)
+    u0.addMethod('POST', this.historyIntegration)
 
   }
 }
