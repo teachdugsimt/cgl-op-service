@@ -57,8 +57,8 @@ export class LambdaMessagingStack extends cdk.NestedStack {
         "TYPEORM_MIGRATIONS_DIR": "dist/migrations",
 
         "API_URL": apiUrl,
-        CHANNEL_ACCESS_TOKEN: "",
-        LIFF_ID: "",
+        CHANNEL_ACCESS_TOKEN: process.env.CHANNEL_ACCESS_TOKEN || "",
+        LIFF_ID: process.env.LIFF_ID || "",
 
       }
       // layers: [props.layer]
