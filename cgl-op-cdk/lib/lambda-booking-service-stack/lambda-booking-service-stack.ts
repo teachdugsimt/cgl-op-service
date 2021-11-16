@@ -3,6 +3,8 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PolicyStatement } from "@aws-cdk/aws-iam"
 import * as secretsManager from "@aws-cdk/aws-secretsmanager";
+import * as events from '@aws-cdk/aws-events'
+import * as targets from "@aws-cdk/aws-events-targets"
 
 interface LambdaBookingServiceProps extends cdk.NestedStackProps {
   apigw: apigateway.RestApi
@@ -74,6 +76,26 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
       .resourceForPath('api/v1/booking')
       .addMethod('POST', this.bookingIntegration)
 
+
+
+    const meetingSyncEvent = {
+      path: `/api/v1/booking/transportation`,
+      httpMethod: "GET"
+    };
+
+    const eventTarget = new targets.LambdaFunction(this.bookingLambdaFunc, {
+      event: events.RuleTargetInput.fromObject(meetingSyncEvent)
+    });
+
+    const eventRule = new events.Rule(this, "CglTransportationEventRule", {
+      enabled: true,
+      description: `Event to invoke GET /api/v1/booking`,
+      ruleName: "cgl-op-event-rule-booking-service",
+      targets: [
+        eventTarget
+      ],
+      schedule: events.Schedule.rate(cdk.Duration.minutes(10))
+    });
   }
 }
 
