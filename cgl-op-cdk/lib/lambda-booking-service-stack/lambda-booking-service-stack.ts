@@ -75,7 +75,10 @@ export class LambdaBookingServiceStack extends cdk.NestedStack {
     apiGatewayRestApi.root
       .resourceForPath('api/v1/booking')
       .addMethod('POST', this.bookingIntegration)
-
+      
+    apiGatewayRestApi.root
+      .resourceForPath('api/v1/booking')
+      .addMethod('GET', this.bookingIntegration)
 
 
     const meetingSyncEvent = {

@@ -40,7 +40,8 @@ export class LambdaJobServiceStack extends cdk.NestedStack {
       code: lambda.Code.fromAsset('../cgl-op-job-service', {
         exclude: ['src/*', 'test/*']
       }),
-      timeout: cdk.Duration.millis(30000),
+      timeout: cdk.Duration.millis(60000),
+      memorySize: 512,
       initialPolicy: [lambdaPolicy],
       currentVersionOptions: {
         removalPolicy: cdk.RemovalPolicy.RETAIN
